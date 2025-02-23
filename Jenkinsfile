@@ -2,37 +2,37 @@ pipeline {
     agent any 
 
     stages {
-        stage('Clean Workspace') {
-           steps {
-                script {
-                    cleanWs() // Fixed typo
-                }
-           }
-        }
 
-        stage('Checkout code') {
+        stage('Clean Workspace') {
             steps {
                 script {
-                    echo 'Checking out code'
-                    checkout scm  // Assumes Jenkins is configured with Git SCM
+                    cleanWs()
                 }
             }
         }
 
-        stage('Show Files and Directories before setup') {
+        stage('Checkout Code') {
             steps {
                 script {
-                    echo 'Showing Files and Directories before setup'
+                    echo 'Checking out code'
+                    checkout scm
+                }
+            }
+        }
+
+        stage('Show Files and Directories Before Setup') {
+            steps {
+                script {
+                    echo 'Listing files before setup'
                     sh 'ls -la'
                 }
             }
         }
 
-        stages {
         stage('Setup Node.js') {
             agent {
                 docker {
-                    image 'node:22.11.0-alpine3.20' 
+                    image 'node:22.11.0-alpine3.20'
                     args '-u root'
                 }
             }
@@ -46,10 +46,8 @@ pipeline {
                 }
             }
         }
-    }
 
-
-        stage('Install dependencies') {
+        stage('Install Dependencies') {
             steps {
                 script {
                     echo 'Installing dependencies'
@@ -58,10 +56,10 @@ pipeline {
             }
         }
 
-        stage('Show Files and Directories after setup') {
+        stage('Show Files and Directories After Setup') {
             steps {
                 script {
-                    echo 'Showing Files and Directories after setup'
+                    echo 'Listing files after setup'
                     sh 'ls -la'
                 }
             }
@@ -70,28 +68,19 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    echo 'Building App'
+                    echo 'Building React App'
                     sh 'npm run build'
                 }
             }
         }
 
-        stage('Show Files and Directories after build') {
+        stage('Show Files and Directories After Build') {
             steps {
                 script {
-                    echo 'Showing Files and Directories after build'
+                    echo 'Listing files after build'
                     sh 'ls -la'
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Build Completed Successfully '
-        }
-        failure {
-            echo 'Build Failed '
         }
     }
 }
