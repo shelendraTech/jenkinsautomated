@@ -1,5 +1,5 @@
 pipeline {
-    agent any 
+    
 
     stages {
 
@@ -81,6 +81,17 @@ pipeline {
                     sh 'ls -la'
                 }
             }
+        }
+    }
+
+
+    post {
+        success {
+            echo 'Build completed successfully'
+        }
+
+        failure {
+            echo 'Build failed'
         }
     }
 }
