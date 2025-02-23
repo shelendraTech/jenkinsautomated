@@ -28,6 +28,7 @@ pipeline {
             }
         }
 
+        stages {
         stage('Setup Node.js') {
             agent {
                 docker {
@@ -45,6 +46,8 @@ pipeline {
                 }
             }
         }
+    }
+
 
         stage('Install dependencies') {
             steps {
