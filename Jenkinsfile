@@ -1,13 +1,15 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:22.11.0-alpine3.20'
+            args '--user root'
+        }
+    }
 
     stages {
-
         stage('Clean Workspace') {
             steps {
-                script {
-                    cleanWs()
-                }
+                cleanWs()
             }
         }
 
@@ -20,78 +22,59 @@ pipeline {
             }
         }
 
-        stage('Show Files and Directories Before Setup') {
+        stage('Show Files Before Setup') {
             steps {
-                script {
-                    echo 'Listing files before setup'
-                    sh 'ls -la'
-                }
+                echo 'Listing files before setup'
+                sh 'ls -la'
             }
         }
 
-        stage('Setup Node.js') {
-            agent {
-                docker {
-                    image 'node:22.11.0-alpine3.20'
-                    args '-u root'
-                }
-            }
+        stage('Verify Node.js & npm') {
             steps {
-                script {
-                    echo 'Verifying Node.js and npm versions'
-                    sh '''
-                        node --version
-                        npm --version
-                    '''
-                }
+                echo 'Checking Node.js & npm versions'
+                sh '''
+                    node --version
+                    npm --version
+                '''
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                script {
-                    echo 'Installing dependencies'
-                    sh 'npm install'
-                }
+                echo 'Installing dependencies'
+                sh 'npm install'
             }
         }
 
-        stage('Show Files and Directories After Setup') {
+        stage('Show Files After Setup') {
             steps {
-                script {
-                    echo 'Listing files after setup'
-                    sh 'ls -la'
-                }
+                echo 'Listing files after setup'
+                sh 'ls -la'
             }
         }
 
         stage('Build') {
             steps {
-                script {
-                    echo 'Building React App'
-                    sh 'npm run build'
-                }
+                echo 'Building React App'
+                sh 'npm run build'
             }
         }
 
-        stage('Show Files and Directories After Build') {
+        stage('Show Files After Build') {
             steps {
-                script {
-                    echo 'Listing files after build'
-                    sh 'ls -la'
-                }
+                echo 'Listing files after build'
+                sh 'ls -la'
             }
         }
     }
 
-
     post {
         success {
-            echo 'Build completed successfully'
+            echo 'Build completed successfully!'
         }
 
         failure {
-            echo 'Build failed'
+            echo 'Build failed! Please check logs for errors.'
         }
     }
 }
